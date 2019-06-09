@@ -8,22 +8,39 @@
 
   <body>
     <div class="uk-container">
-    <p><a href="{{ url_for('.tripDetails') }}"> <h4>Trip Details</h4> </a></p>
-
-    <p>
-      {% with messages = get_flashed_messages() %}
-      {% if messages %}
-      <ul class=flashes>
-        {% for message in messages %}
-        <li>{{ message }}</li>
+      <p><a href="{{ url_for('.tripDetails') }}">
+          <h4>Trip Details</h4>
+        </a></p>
+      <p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class=flashes>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+      </p>
+      <table class="uk-table uk-table-striped uk-table-hover">
+        {% if result %}
+        <tr>
+          <th>Source Airport</th>
+          <th>Destination Airport</th>
+          <th>Trip Date (YYYY-MM-DD)</th>
+          <th>Trip Category </th>
+        </tr>
+        {% for row in result %}
+        <tr>
+          <td> {{ row.source_airport }}</td>
+          <td>{{ row.destination_airport }}</td>
+          <td>{{ row.travel_date }}</td>
+          <td>{{ row.trip_type }}</td>
+        </tr>
         {% endfor %}
-      </ul>
-      {% endif %}
-      {% endwith %}
-    </p>
-
-    {{ table }}
-  </div>
+        {% endif %}
+      </table>
+    </div>
     <script src="static/js/uikit.min.js"></script>
     <script src="static/js/uikit-icons.min.js"></script>
   </body>

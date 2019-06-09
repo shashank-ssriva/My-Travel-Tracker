@@ -4,6 +4,7 @@ import pymysql
 from tables import Results
 from flaskext.mysql import MySQL
 import dateutil.parser as parser
+from datetime import datetime
 
 # Invoke MySQL
 mysql = MySQL()
@@ -48,15 +49,23 @@ def main():
             "SELECT COUNT(*) as count FROM TravelDetails WHERE trip_type = 'Domestic' GROUP BY destination_airport ORDER BY count DESC LIMIT 1")
         mostvisiteddomdestcount = cursor.fetchone()[0]
         cursor.execute(
-            "select source_airport from TravelDetails ORDER BY travel_date DESC LIMIT 1;")
+            "SELECT source_airport FROM TravelDetails ORDER BY travel_date DESC LIMIT 1;")
         lastsource = cursor.fetchone()[0]
         cursor.execute(
-            "select destination_airport from TravelDetails ORDER BY travel_date DESC LIMIT 1;")
+            "SELECT destination_airport FROM TravelDetails ORDER BY travel_date DESC LIMIT 1;")
         lastdestination = cursor.fetchone()[0]
         cursor.execute(
-            "select travel_date from TravelDetails ORDER BY travel_date DESC LIMIT 1;")
+            "SELECT travel_date FROM TravelDetails ORDER BY travel_date DESC LIMIT 1;")
         lastdate = cursor.fetchone()[0]
-
+        date_format = "%Y-%m-%d"
+        today = datetime.today().strftime('%Y-%m-%d')
+        todaydate = datetime.strptime(today, date_format)
+        lastdateval = datetime.strptime(lastdate, date_format)
+        delta = todaydate - lastdateval
+        days_since_last_trip = delta.days
+        print(days_since_last_trip)
+        cursor.execute("SELECT travel_date FROM TravelDetails WHERE trip_type = 'Domestic' ORDER BY travel_date DESC LIMIT 1")
+        last_dom_trip = cursor.fetchone()[0]
         cursor.execute(
             "SELECT destination_airport, COUNT(*) as count FROM TravelDetails WHERE trip_type = 'International' GROUP BY destination_airport ORDER BY count DESC")
         dataarray = cursor.fetchall()
@@ -106,7 +115,8 @@ def main():
                                mostvisiteddomdest=mostvisiteddomdest, mostvisiteddomdestcount=mostvisiteddomdestcount,
                                lastsource=lastsource, lastdestination=lastdestination, lastdate=lastdate,
                                diffint=diffint, labels=labels, values=values, labelsdom=labelsdom, valuesdom=valuesdom,
-                               uniqueyearlist=uniqueyearlist, tripcountlist=tripcountlist
+                               uniqueyearlist=uniqueyearlist, tripcountlist=tripcountlist,
+                               days_since_last_trip=days_since_last_trip, last_dom_trip=last_dom_trip
                                )
     except Exception as e:
         return json.dumps({'error': str(e)})
@@ -142,10 +152,10 @@ def tripDetails():
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT * FROM TravelDetails")
-        rows = cursor.fetchall()
-        table = Results(rows)
-        table.border = True
-        return render_template('trip-details.html', table=table)
+        result = cursor.fetchall()
+        #table = Results(rows)
+        #table.border = True
+        return render_template('trip-details.html', result=result)
     except Exception as e:
         return json.dumps({'error': str(e)})
 
