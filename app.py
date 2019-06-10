@@ -153,8 +153,8 @@ def tripDetails():
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute("SELECT * FROM TravelDetails")
         result = cursor.fetchall()
-        #table = Results(rows)
-        #table.border = True
+        # table = Results(rows)
+        # table.border = True
         return render_template('trip-details.html', result=result)
     except Exception as e:
         return json.dumps({'error': str(e)})
