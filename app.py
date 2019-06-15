@@ -5,7 +5,8 @@ from tables import Results
 from flaskext.mysql import MySQL
 import dateutil.parser as parser
 from datetime import datetime
-import urllib.request, json 
+import urllib.request
+
 # Invoke MySQL
 mysql = MySQL()
 app = Flask(__name__)
@@ -122,7 +123,7 @@ def main():
                                diffint=diffint, labels=labels, values=values, labelsdom=labelsdom, valuesdom=valuesdom,
                                uniqueyearlist=uniqueyearlist, tripcountlist=tripcountlist,
                                days_since_last_trip=days_since_last_trip, last_dom_trip=last_dom_trip,
-                               most_visited_city_temp = most_visited_city_temp, most_visited_city_rh = most_visited_city_rh
+                               most_visited_city_temp=most_visited_city_temp, most_visited_city_rh=most_visited_city_rh
                                )
     except Exception as e:
         return json.dumps({'error': str(e)})
