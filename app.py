@@ -5,7 +5,7 @@ from tables import Results
 from flaskext.mysql import MySQL
 import dateutil.parser as parser
 from datetime import datetime
-
+import urllib.request, json 
 # Invoke MySQL
 mysql = MySQL()
 app = Flask(__name__)
@@ -108,6 +108,11 @@ def main():
                 tripcountlist.append(z[0])
         conn.close()
 
+        with urllib.request.urlopen("https://api.weatherbit.io/v2.0/current?city=%s&key=c1c3dd1fde8649ac8ff1e2f2d40e16d9" %mostvisiteddest) as url:
+            most_visited_city_data = json.loads(url.read().decode())
+            most_visited_city_temp = most_visited_city_data['data'][0]['temp']
+            most_visited_city_rh = most_visited_city_data['data'][0]['rh']
+
         return render_template('index.html',
                                tripcount=tripcount, internationalflights=internationalflights,
                                domesticflights=domesticflights, mostvisiteddest=mostvisiteddest,
@@ -116,7 +121,8 @@ def main():
                                lastsource=lastsource, lastdestination=lastdestination, lastdate=lastdate,
                                diffint=diffint, labels=labels, values=values, labelsdom=labelsdom, valuesdom=valuesdom,
                                uniqueyearlist=uniqueyearlist, tripcountlist=tripcountlist,
-                               days_since_last_trip=days_since_last_trip, last_dom_trip=last_dom_trip
+                               days_since_last_trip=days_since_last_trip, last_dom_trip=last_dom_trip,
+                               most_visited_city_temp = most_visited_city_temp, most_visited_city_rh = most_visited_city_rh
                                )
     except Exception as e:
         return json.dumps({'error': str(e)})
