@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 # MySQL database details
 app.config['MYSQL_DATABASE_USER'] = 'TravelDetailsUser'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'MyPassword'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'MyPassword@017'
 app.config['MYSQL_DATABASE_DB'] = 'MyTravelTracker'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3307
