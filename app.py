@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 # MySQL database details
 app.config['MYSQL_DATABASE_USER'] = 'TravelDetailsUser'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Amix@2109'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'MyPassword'
 app.config['MYSQL_DATABASE_DB'] = 'MyTravelTracker'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3307
@@ -109,7 +109,7 @@ def main():
                 tripcountlist.append(z[0])
         conn.close()
 
-        with urllib.request.urlopen("https://api.weatherbit.io/v2.0/current?city=%s&key=c1c3dd1fde8649ac8ff1e2f2d40e16d9" %mostvisiteddest) as url:
+        with urllib.request.urlopen("https://api.weatherbit.io/v2.0/current?city=%s&key=c1c3dd1fde8649ac8ff1e2f2d40e16d9" % mostvisiteddest) as url:
             most_visited_city_data = json.loads(url.read().decode())
             most_visited_city_temp = most_visited_city_data['data'][0]['temp']
             most_visited_city_rh = most_visited_city_data['data'][0]['rh']
