@@ -135,10 +135,9 @@ def addDetails():
         _tookoff = request.form['took-off-from']  # GET data from the text-box.
         _landedon = request.form['landed-on']  # GET data from the text-box.
         _tripdate = request.form['trip-date']  # GET data from the text-box.
-        # GET data from the text-box.
-        _triptype = request.form['trip-category']
+        _triptype = request.form['trip-category'] # GET data from the dropdown.
 
-        # If none of the text-boxes is empty & we are clicking the submit button.
+        # If none of the text-boxes is empty & submit button is pressed.
         if _tookoff and _landedon and _tripdate and _triptype and request.method == 'POST':
             conn = mysql.connect()
             cursor = conn.cursor()
@@ -158,7 +157,7 @@ def tripDetails():
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM TravelDetails")
+        cursor.execute("SELECT * FROM TravelDetails ORDER BY travel_date DESC;")
         result = cursor.fetchall()
         # table = Results(rows)
         # table.border = True
