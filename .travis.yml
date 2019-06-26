@@ -6,7 +6,7 @@ script:
 # unit test
   - python -m pytest -v tests/*
 # linting test
-  - flake8 --ignore=E501,F401
+  - flake8
 # code coverage test  
   - coverage report -m
 # SonarQube 
