@@ -5,3 +5,4 @@ python-dateutil
 pymysql
 flask-table
 flask-mysql
+coverage
