@@ -7,3 +7,9 @@ script:
   - python -m pytest -v tests/*
 # linting test
   - flake8 --ignore=E501,F401
+# SonarQube 
+addons:
+  sonarcloud:
+    organization: "shashank-ssriva-github"
+script:
+  - sonar-scanner
