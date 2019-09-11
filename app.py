@@ -1,4 +1,4 @@
-# Import the neccessary modeules
+# Import the necessary modules
 from flask import Flask, render_template, json, request, redirect
 import pymysql
 from tables import Results
@@ -65,7 +65,8 @@ def main():
         delta = todaydate - lastdateval
         days_since_last_trip = delta.days
         print(days_since_last_trip)
-        cursor.execute("SELECT travel_date FROM TravelDetails WHERE trip_type = 'Domestic' ORDER BY travel_date DESC LIMIT 1")
+        cursor.execute(
+            "SELECT travel_date FROM TravelDetails WHERE trip_type = 'Domestic' ORDER BY travel_date DESC LIMIT 1")
         last_dom_trip = cursor.fetchone()[0]
         cursor.execute(
             "SELECT destination_airport, COUNT(*) as count FROM TravelDetails WHERE trip_type = 'International' GROUP BY destination_airport ORDER BY count DESC")
@@ -135,7 +136,8 @@ def addDetails():
         _tookoff = request.form['took-off-from']  # GET data from the text-box.
         _landedon = request.form['landed-on']  # GET data from the text-box.
         _tripdate = request.form['trip-date']  # GET data from the text-box.
-        _triptype = request.form['trip-category']  # GET data from the dropdown.
+        # GET data from the dropdown.
+        _triptype = request.form['trip-category']
 
         # If none of the text-boxes is empty & submit button is pressed.
         if _tookoff and _landedon and _tripdate and _triptype and request.method == 'POST':
@@ -157,13 +159,77 @@ def tripDetails():
     try:
         conn = mysql.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
-        cursor.execute("SELECT * FROM TravelDetails ORDER BY travel_date DESC;")
+        cursor.execute(
+            "SELECT * FROM TravelDetails ORDER BY travel_date DESC;")
         result = cursor.fetchall()
         # table = Results(rows)
         # table.border = True
         return render_template('trip-details.html', result=result)
     except Exception as e:
         return json.dumps({'error': str(e)})
+
+
+@app.route('/editTrip/<int:id>')
+def edit_trip(id):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor.execute("SELECT * FROM TravelDetails WHERE travel_id=%s", id)
+        row = cursor.fetchone()
+        if row:
+            return render_template('edit-trip.html', row=row)
+        else:
+            return 'Error loading #{id}'.format(id=id)
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/update', methods=['POST'])
+def update_trip():
+    try:
+        _tookoff = request.form['took-off-from']  # GET data from the text-box.
+        _landedon = request.form['landed-on']  # GET data from the text-box.
+        _tripdate = request.form['trip-date']  # GET data from the text-box.
+        # GET data from the dropdown.
+        _triptype = request.form['trip-category']
+        _tripid = request.form['trip-id']
+        # Validate the received values
+        if _tookoff and _landedon and _tripdate and _triptype and _tripid and request.method == 'POST':
+            # Save edits
+            sql = "UPDATE TravelDetails SET source_airport=%s, destination_airport=%s, travel_date, trip_type=%s WHERE trip_id=%s"
+            data = (_tookoff, _landedon, _tripdate, _triptype, _tripid)
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute(sql, data)
+            conn.commit()
+            flash('User updated successfully!')
+            return redirect('/')
+        else:
+            return 'Error while updating the trip!'
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+@app.route('/delete/<int:id>')
+def delete_user(id):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM tbl_user WHERE user_id=%s", (id,))
+        conn.commit()
+        flash('User deleted successfully!')
+        return redirect('/')
+    except Exception as e:
+        print(e)
+    finally:
+        cursor.close()
+        conn.close()
 
 
 if __name__ == "__main__":
